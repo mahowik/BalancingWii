@@ -8,8 +8,8 @@ Video:
 http://youtu.be/U8bBna9iWCU
 
 Blogs:
-http://forum.rcdesign.ru/blogs/83206/blog18515.html
-http://www.multiwii.com/forum/viewtopic.php?f=7&t=4787
+- http://forum.rcdesign.ru/blogs/83206/blog18515.html
+- http://www.multiwii.com/forum/viewtopic.php?f=7&t=4787
 
 
 Hardware:
@@ -24,27 +24,27 @@ Hardware:
 
 Pinout for Arduino nano (atmega328p):
 
-A0 - V_BATPIN: after the resistor divisor we should get [0V;5V]->[0;1023] on analogue V_BATPIN with R1=33k and R2=51k, 
+- A0 - V_BATPIN: after the resistor divisor we should get [0V;5V]->[0;1023] on analogue V_BATPIN with R1=33k and R2=51k, 
      i.e. (+12v)~51k~(A0 pin)~33k~(GND)
-A2 - BUZZERPIN
+- A2 - BUZZERPIN
 
 I2C:
-A4 - SDA
-A5 - SCL
+- A4 - SDA
+- A5 - SCL
 
 RC control:
-D2 - CPPM (PPM_SUM)
+- D2 - CPPM (PPM_SUM)
 
 Motor driver pins:
-D5 - STEP1 (PORTD 5)
-D6 - STEP2 (PORTD 6)
-D7 - DIR1 (PORTD 7)
-D8 - DIR2 (PORTB 0)
-D4 - ENABLE (for both)
+- D5 - STEP1 (PORTD 5)
+- D6 - STEP2 (PORTD 6)
+- D7 - DIR1 (PORTD 7)
+- D8 - DIR2 (PORTB 0)
+- D4 - ENABLE (for both)
 
 If you look to the tail of the robot:
-right motor = STEP1 & DIR1
-left motor  = STEP2 & DIR2
+- right motor = STEP1 & DIR1
+- left motor  = STEP2 & DIR2
 
    
 Also see for new defines added with this project for robot setup:
