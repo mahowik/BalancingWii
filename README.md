@@ -16,8 +16,8 @@ Hardware:
 - Arduino nano (atmega328p)
 - mpu6050 gyro-accelerometer (GY_521)
 - any RC receiver with CPPM (ppmsum) output
-- A4988 motor drivers
-- nema 17 stepper motors
+- A4988 motor drivers with 1/8 microstepping configuration (see http://www.pololu.com/product/1182/ for details)
+- Nema 17 stepper motors
 - 1/8 Buggy Wheels
 - Buzzer 
 
