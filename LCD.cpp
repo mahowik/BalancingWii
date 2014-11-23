@@ -2,7 +2,7 @@
 #include "config.h"
 #include "def.h"
 #include "types.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "Alarms.h"
 #include "EEPROM.h"
 #include "Output.h"
@@ -1131,19 +1131,19 @@ PROGMEM const void * const lcd_param_ptr_table [] = {
 #endif
 #ifdef LCD_CONF_AUX
   #if ACC
-    &lcd_param_text41, &conf.activate[BOXANGLE], &__AUX1,
+    &lcd_param_text41, &conf.activate[BOXSIMPLE], &__AUX1,
     #ifndef SUPPRESS_LCD_CONF_AUX2
-      &lcd_param_text41, &conf.activate[BOXANGLE], &__AUX2,
+      &lcd_param_text41, &conf.activate[BOXSIMPLE], &__AUX2,
     #endif
-    &lcd_param_text42, &conf.activate[BOXHORIZON], &__AUX1,
+    &lcd_param_text42, &conf.activate[BOXRISE], &__AUX1,
     #ifndef SUPPRESS_LCD_CONF_AUX2
-      &lcd_param_text42, &conf.activate[BOXHORIZON], &__AUX2,
+      &lcd_param_text42, &conf.activate[BOXRISE], &__AUX2,
     #endif
     #ifndef SUPPRESS_LCD_CONF_AUX34
-      &lcd_param_text41, &conf.activate[BOXANGLE], &__AUX3,
-      &lcd_param_text41, &conf.activate[BOXANGLE], &__AUX4,
-      &lcd_param_text42, &conf.activate[BOXHORIZON], &__AUX3,
-      &lcd_param_text42, &conf.activate[BOXHORIZON], &__AUX4,
+      &lcd_param_text41, &conf.activate[BOXSIMPLE], &__AUX3,
+      &lcd_param_text41, &conf.activate[BOXSIMPLE], &__AUX4,
+      &lcd_param_text42, &conf.activate[BOXRISE], &__AUX3,
+      &lcd_param_text42, &conf.activate[BOXRISE], &__AUX4,
     #endif
   #endif
   #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))

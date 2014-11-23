@@ -6,7 +6,7 @@
 #include "types.h"
 
 // default POSHOLD control gains
-#define POSHOLD_P              .11
+#define POSHOLD_P              2.00
 #define POSHOLD_I              0.0
 #define POSHOLD_IMAX           20        // degrees
 
@@ -151,7 +151,7 @@ extern int16_t lookupThrottleRC[11];
   extern int16_t  nav_rated[2];    //Adding a rate controller to the navigation to make it smoother
 
   // default POSHOLD control gains
-  #define POSHOLD_P              .11
+  #define POSHOLD_P              2.00
   #define POSHOLD_I              0.0
   #define POSHOLD_IMAX           20        // degrees
 

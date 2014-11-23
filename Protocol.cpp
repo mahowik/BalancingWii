@@ -6,7 +6,7 @@
 #include "LCD.h"
 #include "Output.h"
 #include "GPS.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "Serial.h"
 #include "Protocol.h"
 #include "RX.h"
@@ -372,8 +372,9 @@ void evaluateCommand() {
      st.i2c_errors_count = i2c_errors_count;
      st.sensor           = ACC|BARO<<1|MAG<<2|GPS<<3|SONAR<<4;
      #if ACC
-       if(f.ANGLE_MODE)   tmp |= 1<<BOXANGLE;
-       if(f.HORIZON_MODE) tmp |= 1<<BOXHORIZON;
+       if(f.SIMPLE_MODE)    tmp |= 1<<BOXSIMPLE;
+       if(f.RISE_MODE)    tmp |= 1<<BOXRISE;
+       if(f.POSHOLD_MODE)   tmp |= 1<<BOXPOSHOLD;
      #endif
      #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))
        if(f.BARO_MODE) tmp |= 1<<BOXBARO;

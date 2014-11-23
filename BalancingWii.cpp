@@ -6,6 +6,9 @@ November  2013     V2.3
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  any later version. see <http://www.gnu.org/licenses/>
+ 
+ ########## Extended for balancing robot by Mahowik ############
+ 
 */
 
 #include <avr/io.h>
@@ -14,7 +17,7 @@ November  2013     V2.3
 #include "config.h"
 #include "def.h"
 #include "types.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "Alarms.h"
 #include "EEPROM.h"
 #include "IMU.h"
@@ -46,8 +49,9 @@ const char pidnames[] PROGMEM =
 const char boxnames[] PROGMEM = // names for dynamic generation of config GUI
   "ARM;"
   #if ACC
-    "ANGLE;"
-    "HORIZON;"
+    "SIMPLE;"
+    "RISE;"
+    "POS HOLD;"
   #endif
   #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))
     "BARO;"
@@ -97,8 +101,9 @@ const char boxnames[] PROGMEM = // names for dynamic generation of config GUI
 const uint8_t boxids[] PROGMEM = {// permanent IDs associated to boxes. This way, you can rely on an ID number to identify a BOX function.
   0, //"ARM;"
   #if ACC
-    1, //"ANGLE;"
-    2, //"HORIZON;"
+    1, //"SIMPLE;"
+    2, //"RISE;"
+    3, //"POS HOLD;"
   #endif
   #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))
     3, //"BARO;"
@@ -278,7 +283,7 @@ int16_t lookupThrottleRC[11];// lookup table for expo & mid THROTTLE
 // *************************
 // motor and servo functions
 // *************************
-int16_t output;
+//int16_t output;
 int16_t motor[2];
 //int16_t servo[8] = {1500,1500,1500,1500,1500,1500,1500,1000};
 
@@ -832,10 +837,15 @@ void loop () {
         #endif
         //angleErrorI[ROLL] = 0; angleErrorI[PITCH] = 0;
       #endif
-      if (conf.activate[BOXARM] > 0) {             // Arming/Disarming via ARM BOX
-        if ( rcOptions[BOXARM] && f.OK_TO_ARM ) go_arm(); else if (f.ARMED) go_disarm();
-      }
+      //if (conf.activate[BOXARM] > 0) {             // Arming/Disarming via ARM BOX
+      //  if ( rcOptions[BOXARM] && f.OK_TO_ARM ) go_arm(); else if (f.ARMED) go_disarm();
+      //}
     }
+    
+    if (conf.activate[BOXARM] > 0) {             // Arming/Disarming via ARM BOX
+      if ( rcOptions[BOXARM] && f.OK_TO_ARM ) go_arm(); else if (f.ARMED) go_disarm();
+    }
+    
     if(rcDelayCommand == 20) {
       if(f.ARMED) {                   // actions during armed
         #ifdef ALLOW_ARM_DISARM_VIA_TX_YAW
@@ -959,30 +969,34 @@ void loop () {
 
     // note: if FAILSAFE is disable, failsafeCnt > 5*FAILSAFE_DELAY is always false
     #if ACC
-      if ( rcOptions[BOXANGLE] || (failsafeCnt > 5*FAILSAFE_DELAY) ) { 
-        // bumpless transfer to Level mode
-        if (!f.ANGLE_MODE) {
-          //angleErrorI[ROLL] = 0; angleErrorI[PITCH] = 0;
-          f.ANGLE_MODE = 1;
+      if ( rcOptions[BOXSIMPLE] ) { 
+        if (!f.SIMPLE_MODE) {
+          f.SIMPLE_MODE = 1;
         }  
       } else {
-        // failsafe support
-        f.ANGLE_MODE = 0;
+        f.SIMPLE_MODE = 0;
       }
-      if ( rcOptions[BOXHORIZON] ) {
-        f.ANGLE_MODE = 0;
-        if (!f.HORIZON_MODE) {
-          //angleErrorI[ROLL] = 0; angleErrorI[PITCH] = 0;
-          f.HORIZON_MODE = 1;
+      
+      if ( rcOptions[BOXRISE] ) {
+        if (!f.RISE_MODE) {
+          f.RISE_MODE = 1;
         }
       } else {
-        f.HORIZON_MODE = 0;
+        f.RISE_MODE = 0;
+      }
+      
+      if ( rcOptions[BOXPOSHOLD] ) {
+        if (!f.POSHOLD_MODE) {
+          f.POSHOLD_MODE = 1;
+        }
+      } else {
+        f.POSHOLD_MODE = 0;
       }
     #endif
 
     if (rcOptions[BOXARM] == 0) f.OK_TO_ARM = 1;
     #if !defined(GPS_LED_INDICATOR)
-      if (f.ANGLE_MODE || f.HORIZON_MODE) {STABLEPIN_ON;} else {STABLEPIN_OFF;}
+      if (f.SIMPLE_MODE || f.RISE_MODE) {STABLEPIN_ON;} else {STABLEPIN_OFF;}
     #endif
 
     #if BARO
@@ -1142,10 +1156,10 @@ void loop () {
   //**** Experimental FlightModes *****
   //***********************************
   #if defined(ACROTRAINER_MODE)
-    if(f.ANGLE_MODE){
+    if(f.SIMPLE_MODE){
       if (abs(rcCommand[ROLL]) + abs(rcCommand[PITCH]) >= ACROTRAINER_MODE ) {
-        f.ANGLE_MODE=0;
-        f.HORIZON_MODE=0;
+        f.SIMPLE_MODE=0;
+        f.RISE_MODE=0;
         f.MAG_MODE=0;
         f.BARO_MODE=0;
         f.GPS_HOME_MODE=0;
@@ -1188,11 +1202,6 @@ void loop () {
     }
   #endif
 
-  #if defined(THROTTLE_ANGLE_CORRECTION)
-    if(f.ANGLE_MODE || f.HORIZON_MODE) {
-       rcCommand[THROTTLE]+= throttleAngleCorrection;
-    }
-  #endif
   
   #if GPS
     if ( (f.GPS_HOME_MODE || f.GPS_HOLD_MODE) && f.GPS_FIX_HOME ) {
@@ -1212,85 +1221,123 @@ void loop () {
       GPS_angle[PITCH] = 0;
     }
   #endif
+  
+  
 
-
+  //***********************************//
+  //****       BalancingWii       *****//
+  //***********************************//
 
   /****************** PI_speed + PD_angle regulator *****************/
-  
+  int16_t targetSpeed = constrain(rcCommand[PITCH], -MAX_SPEED, MAX_SPEED);
+  int16_t steering = constrain(rcCommand[ROLL]>>2, -MAX_STEERING, MAX_STEERING);
+  steering = f.SIMPLE_MODE ? (steering*2/3) : steering;
   
   actualSpeed = (actualMotorSpeed[1] - actualMotorSpeed[0])/2;  // Positive: forward
-
-  static float actualAveragedSpeed = 0.0f; 
-  actualAveragedSpeed = actualAveragedSpeed * 0.965f + (float)actualSpeed * 0.035f;
   
-  //int16_t targetSpeed = constrain((rcCommand[PITCH]*3)/2, -MAX_SPEED, MAX_SPEED);
-  int16_t targetSpeed = constrain(rcCommand[PITCH], -MAX_SPEED, MAX_SPEED);
-    
+  
+  /**** position hold mode ****/
+  static float positionError = 0.0f;
+  if(f.POSHOLD_MODE && abs(targetSpeed) < 15 && abs(steering) < 15) {
+    positionError += actualSpeed * (float)cycleTime * 0.000001f;
+  } else {
+    positionError = 0.0f;
+  }
+  
+  
   /**** PI_speed regulator ****/
+  static float actualAveragedSpeed = 0.0f; 
+  actualAveragedSpeed = actualAveragedSpeed * 0.92f + (float)actualSpeed * 0.08f;
+  error = targetSpeed - actualAveragedSpeed -(positionError * conf.pid[PIDPOS].P8 * 0.01f);  //16 bits is ok here
   
-  // calculate error
-  error = targetSpeed - actualAveragedSpeed;  //16 bits is ok here
-  //debug[0] = error;
   speedErrorI = constrain(speedErrorI + (int16_t)(((int32_t)error * cycleTime)>>11), -20000, 20000);    //16 bits is ok here
+  
+  int16_t maxTargetAngle = f.SIMPLE_MODE ? (MAX_TARGET_ANGLE*2/3) : MAX_TARGET_ANGLE;
   
   int16_t targetAngle = // PTerm + ITerm
         (((int32_t)error * conf.pid[PIDSPEED].P8)>>7)           // 32 bits is needed for calculation: angleError*P8 could exceed 32768   16 bits is ok for result
-        + constrain( (((int32_t)speedErrorI * conf.pid[PIDSPEED].I8)>>14), -MAX_TARGET_ANGLE/6, MAX_TARGET_ANGLE/6);   // 32 bits is needed for calculation:10000*I8 could exceed 32768   16 bits is ok for result
+        + constrain( (((int32_t)speedErrorI * conf.pid[PIDSPEED].I8)>>14), -maxTargetAngle/6, maxTargetAngle/6);   // 32 bits is needed for calculation:10000*I8 could exceed 32768   16 bits is ok for result
   
-  targetAngle = constrain(targetAngle, -MAX_TARGET_ANGLE, MAX_TARGET_ANGLE);    
-  //debug[1] = targetAngle;
-  
-  //int16_t targetAngle = constrain(rcCommand[PITCH]>>1, -MAX_TARGET_ANGLE, MAX_TARGET_ANGLE);
-  //debug[0] = targetAngle;
+  targetAngle = constrain(targetAngle, -maxTargetAngle, maxTargetAngle);    
   
   
-  /**** PID_angle regulator ****/
-  
-  // calculate angle error
-  
+  /**** PD_angle regulator ****/
   int16_t currAngle = att.angle[CURRENT_AXIS] + conf.angleTrim[CURRENT_AXIS];
   #ifdef INVERT_CURRENT_AXIS
-      currAngle = -currAngle;
+    currAngle = -currAngle;
   #endif
   int16_t angleError =  targetAngle - currAngle; //16 bits is ok here
-  //debug[2] = angleError;
   
-  //angleErrorI = constrain(angleErrorI + angleError, -10000, 10000);                                             // WindUp     //16 bits is ok here
-  //angleErrorI = constrain(angleErrorI + (int16_t)(((int32_t)angleError * cycleTime)>>11), -30000, 30000);         // WindUp     //16 bits is ok here
-
-  output = // PTerm + ITerm - DTerm 
+  int16_t acceleration = // PTerm - DTerm 
         (((int32_t)angleError * conf.pid[PIDANGLE].P8)>>4)                      // 32 bits is needed for calculation: error*P8 could exceed 32768   16 bits is ok for result
-      //+ (((int32_t)angleErrorI * conf.pid[PIDANGLE].I8)>>13)                    // 32 bits is needed for calculation:10000*I8 could exceed 32768   16 bits is ok for result
-      - (((int32_t)imu.gyroData[CURRENT_AXIS] * conf.pid[PIDANGLE].D8)>>5);     // 32 bits is needed for calculation   
+        - (((int32_t)imu.gyroData[CURRENT_AXIS] * conf.pid[PIDANGLE].D8)>>5);     // 32 bits is needed for calculation   
   
-  //output = constrain(output, -MAX_SPEED, MAX_SPEED); 
-  //debug[3] = output;
+  static float speed = 0.0f;
+  speed = constrain(speed + ((float)acceleration * (float)cycleTime * 0.000001f), -MAX_SPEED, MAX_SPEED); 
   
-  static float outputVelocity = 0.0f;
+
+  /**** rise mode ****/
   
-  outputVelocity = constrain(outputVelocity + ((float)output * (float)cycleTime * 0.000001f), -MAX_SPEED, MAX_SPEED); 
-  //debug[3] = outputVelocity;
+  #define MAX_RISE_SPEED		140
+  #define MAX_REVERSED_RISE_SPEED	100
   
-  int16_t steering = constrain(rcCommand[ROLL]>>2, -MAX_STEERING, MAX_STEERING);
-  //steering = steering * ((float)(MAX_SPEED - abs(outputVelocity))/MAX_SPEED);
-  
-  if(f.ARMED && (abs(att.angle[CURRENT_AXIS]) < 700)  // if angle less than 70 degree
-             //&& (abs(error) > 20) 
-             //&& ((abs(targetSpeed) > 0) || (abs(steering) > 0) ||
-             //    (abs(actualAveragedSpeed) > 10) || 
-             //    (abs(outputVelocity) > 10) || 
-             //    (abs(angleError) > 5)) 
-                 ) {
-                 
-    setMotorSpeed(0, outputVelocity + steering);    // right motor
-    setMotorSpeed(1, -outputVelocity + steering);   // left motor
+  static uint8_t risePhase = 2; // to prevent rising without switching off before
+  float dynK = 0.0f; 
+  if(f.ARMED) {
+    int16_t currAbsAngle = abs(currAngle);
+    if(currAbsAngle < 250) {  // if angle less than 25 degree
+      dynK = 1.0f;
+
+    } else if(currAbsAngle < 800) { // help to rise with less speed but more torque
+      dynK = (1000.0f - currAbsAngle) / 1000.0f + 0.08f; 
+      risePhase = 2; // to prevent rising without switching off before
+
+    } else { 
+      dynK = 1.0f;
+
+      if(f.RISE_MODE) { // if robot fell, use it to auto rise! ;)
+        static float riseSpeed = 0; 
+        if(risePhase == 0) { // get direct acceleration 
+          riseSpeed = constrain(riseSpeed + (0.7f * RISE_SPEED_K), 0, MAX_RISE_SPEED);
+          speed = (currAngle > 0) ? riseSpeed : -riseSpeed; // forward direction
+          if(riseSpeed >= MAX_RISE_SPEED) {
+            riseSpeed = 0.0f; // force stop (it will throw up the robot) and prepare for next phase in reverse
+            risePhase = 1;
+          }
+        } else if(risePhase == 1) { // get reversed acceleration to rise 
+          riseSpeed = constrain(riseSpeed + (0.85f * RISE_SPEED_K), 0, MAX_REVERSED_RISE_SPEED);
+          speed = (currAngle > 0) ? -riseSpeed : riseSpeed; // backward direction
+          if(riseSpeed >= MAX_REVERSED_RISE_SPEED) {
+            risePhase = 2;
+          }
+        } else if(risePhase == 2) { // prepare for the next rise 
+          riseSpeed = 0.0f;
+          speed = 0.0f;
+        }
+        steering = 0; // to prevent turning during auto rising 
+      
+      } else { // if manual mode for rising
+        speed = constrain(-targetSpeed/2, -MAX_SPEED/2, MAX_SPEED/2);
+        steering = (abs(targetSpeed) < 100) ? steering/2 : 0; // to prevent turning during acceleration 
+        risePhase = 0; // reset rise phase
+      }
+    }
     
-  } else { // if robot fell, turn off the motors
-    outputVelocity = 0.0f;
-    setMotorSpeed(0, 0);
-    setMotorSpeed(1, 0);
+  } else { // turn off the motors
+    speed = 0.0f;
+    steering = 0;
+    risePhase = 2; // to prevent rising without switching off before
   }
   
-  //setMotorSpeed(0, targetSpeed + steering);
-  //setMotorSpeed(1, -targetSpeed + steering);
+  int16_t outputSpeed = constrain(speed * dynK, -MAX_SPEED, MAX_SPEED); ;
+  
+  // to don't lost a control on big speeds and not overlimit the MAX_SPEED
+  if((abs(outputSpeed) + abs(steering)) > MAX_SPEED) { 
+    outputSpeed = (outputSpeed > 0) ? (MAX_SPEED - abs(steering)) : (-MAX_SPEED + abs(steering));
+  }
+  
+  // apply both motor speed
+  setMotorSpeed(0, outputSpeed + steering);    // right motor
+  setMotorSpeed(1, -outputSpeed + steering);   // left motor
+  
 }

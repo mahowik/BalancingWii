@@ -2,7 +2,7 @@
 #include "config.h"
 #include "def.h"
 #include "types.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "LCD.h"
 #include "Sensors.h"
 #include "Alarms.h"
@@ -144,8 +144,8 @@ void alarmPatternComposer(){
     else if (alarmArray[3] == 1)  PilotLampSequence(100,B0101<<8|B00010001,4);                    //BeeperOn
     else{        
       resource = 2; 
-      if (f.ARMED && f.ANGLE_MODE) patternDecode(resource,100,100,100,100,1000);                //Green Slow Blink-->angle
-      else if (f.ARMED && f.HORIZON_MODE) patternDecode(resource,200,200,200,100,1000);         //Green mid Blink-->horizon
+      if (f.ARMED && f.SIMPLE_MODE) patternDecode(resource,100,100,100,100,1000);                //Green Slow Blink-->angle
+      else if (f.ARMED && f.RISE_MODE) patternDecode(resource,200,200,200,100,1000);         //Green mid Blink-->horizon
       else if (f.ARMED) patternDecode(resource,100,100,0,100,1000);                             //Green fast Blink-->acro
       else turnOff(resource);                                                               //switch off
       resource = 3; 
@@ -400,7 +400,7 @@ void blinkLED(uint8_t num, uint8_t ontime,uint8_t repeat) {
   
     b[0]='M'; // MultiwII mode
     if (f.ARMED) { // Motors running = flying
-      if(!(f.ANGLE_MODE||f.HORIZON_MODE)){ //ACRO
+      if(!(f.SIMPLE_MODE||f.RISE_MODE)){ //ACRO
         b[0]= 'x';
       }
       else if(f.GPS_HOME_MODE){ //RTH
@@ -409,7 +409,7 @@ void blinkLED(uint8_t num, uint8_t ontime,uint8_t repeat) {
       else if(f.GPS_HOLD_MODE){//Position Hold
         b[0]= 'v';
       } 
-      else if(f.HORIZON_MODE){ //HORIZON mode
+      else if(f.RISE_MODE){ //HORIZON mode
         b[0]= 'y';
       }   
       else {
@@ -427,8 +427,8 @@ void blinkLED(uint8_t num, uint8_t ontime,uint8_t repeat) {
     }
     else { // Motors not running = on the ground
       b[0]= 's';
-      if (f.ANGLE_MODE) b[1]=1; 
-      else if (f.HORIZON_MODE) b[1]=2; 
+      if (f.SIMPLE_MODE) b[1]=1; 
+      else if (f.RISE_MODE) b[1]=2; 
       else b[1]= 0;                  
       if (f.BARO_MODE) b[2]=1; 
       else b[2]= 0;                  

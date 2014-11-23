@@ -34,8 +34,9 @@ enum pid {
 enum box {
   BOXARM,
   #if ACC
-    BOXANGLE,
-    BOXHORIZON,
+    BOXSIMPLE,
+    BOXRISE,
+    BOXPOSHOLD,
   #endif
   #if BARO && (!defined(SUPPRESS_BARO_ALTHOLD))
     BOXBARO,
@@ -114,8 +115,9 @@ typedef struct {
   uint8_t I2C_INIT_DONE :1 ; // For i2c gps we have to now when i2c init is done, so we can update parameters to the i2cgps from eeprom (at startup it is done in setup())
   uint8_t ACC_CALIBRATED :1 ;
   uint8_t NUNCHUKDATA :1 ;
-  uint8_t ANGLE_MODE :1 ;
-  uint8_t HORIZON_MODE :1 ;
+  uint8_t SIMPLE_MODE :1 ;
+  uint8_t RISE_MODE :1 ;
+  uint8_t POSHOLD_MODE :1 ;
   uint8_t MAG_MODE :1 ;
   uint8_t BARO_MODE :1 ;
   uint8_t GPS_HOME_MODE :1 ;

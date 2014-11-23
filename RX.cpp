@@ -4,7 +4,7 @@
 #include "types.h"
 #include "Serial.h"
 #include "Protocol.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "Alarms.h"
 
 /**************************************************************************************/
@@ -427,13 +427,13 @@ void computeRC() {
         if ( rcDataMean[chan] < (uint16_t)rcData[chan] -3)  rcData[chan] = rcDataMean[chan]+2;
         if ( rcDataMean[chan] > (uint16_t)rcData[chan] +3)  rcData[chan] = rcDataMean[chan]-2;
       #endif
-      if (chan<8 && rcSerialCount > 0) { // rcData comes from MSP and overrides RX Data until rcSerialCount reaches 0
-        rcSerialCount --;
+      //if (chan<8 && rcSerialCount > 0) { // rcData comes from MSP and overrides RX Data until rcSerialCount reaches 0
+        //rcSerialCount --;
         #if defined(FAILSAFE)
           failsafeCnt = 0;
         #endif
         if (rcSerial[chan] >900) {rcData[chan] = rcSerial[chan];} // only relevant channels are overridden
-      }
+      //}
     }
   #endif
 }

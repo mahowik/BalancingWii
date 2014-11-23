@@ -4,14 +4,14 @@
 #include "def.h"
 #include "types.h"
 #include "EEPROM.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "Alarms.h"
 #include "GPS.h"
 
 void LoadDefaults(void);
 
 uint8_t calculate_sum(uint8_t *cb , uint8_t siz) {
-  uint8_t sum=0x95;  // checksum init
+  uint8_t sum=0x96;  // checksum init
   while(--siz) sum += *cb++;  // calculate checksum (without checksum byte)
   return sum;
 }
@@ -141,13 +141,14 @@ void LoadDefaults() {
     // do that at the last possible moment, so we can override virtually all defaults and constants
   #else
 
-    conf.pid[PIDSPEED].P8     = 50;  conf.pid[PIDSPEED].I8    = 5; conf.pid[PIDSPEED].D8     = 0;
-    conf.pid[PIDANGLE].P8    = 100;   conf.pid[PIDANGLE].I8    = 0; conf.pid[PIDANGLE].D8    = 45;
+    conf.pid[PIDSPEED].P8     = 80;  conf.pid[PIDSPEED].I8    = 0; conf.pid[PIDSPEED].D8     = 0;
+    conf.pid[PIDANGLE].P8    = 40;   conf.pid[PIDANGLE].I8    = 0; conf.pid[PIDANGLE].D8    = 30;
     //conf.pid[PIDLEVEL].P8 = 90; conf.pid[PIDLEVEL].I8 = 10; conf.pid[PIDLEVEL].D8 = 30;
     
     //conf.pid[YAW].P8      = 68;  conf.pid[YAW].I8     = 45;  conf.pid[YAW].D8     = 0;
     //conf.pid[PIDALT].P8   = 64; conf.pid[PIDALT].I8   = 25; conf.pid[PIDALT].D8   = 24;
 
+    conf.pid[PIDPOS].P8  = POSHOLD_P * 100;
     //conf.pid[PIDPOS].P8  = POSHOLD_P * 100;     conf.pid[PIDPOS].I8    = POSHOLD_I * 100;       conf.pid[PIDPOS].D8    = 0;
     //conf.pid[PIDPOSR].P8 = POSHOLD_RATE_P * 10; conf.pid[PIDPOSR].I8   = POSHOLD_RATE_I * 100;  conf.pid[PIDPOSR].D8   = POSHOLD_RATE_D * 1000;
     //conf.pid[PIDNAVR].P8 = NAV_P * 10;          conf.pid[PIDNAVR].I8   = NAV_I * 100;           conf.pid[PIDNAVR].D8   = NAV_D * 1000;
@@ -156,7 +157,7 @@ void LoadDefaults() {
 
     //conf.pid[PIDVEL].P8 = 0;      conf.pid[PIDVEL].I8 = 0;    conf.pid[PIDVEL].D8 = 0;
 
-    conf.rcRate8 = 100; conf.rcExpo8 = 35;
+    conf.rcRate8 = 100; conf.rcExpo8 = 20;
     conf.rollPitchRate = 0;
     conf.yawRate = 0;
     conf.dynThrPID = 0;

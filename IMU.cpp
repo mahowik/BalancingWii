@@ -2,7 +2,7 @@
 #include "config.h"
 #include "def.h"
 #include "types.h"
-#include "MultiWii.h"
+#include "BalancingWii.h"
 #include "IMU.h"
 #include "Sensors.h"
 

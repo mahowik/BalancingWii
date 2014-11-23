@@ -37,9 +37,11 @@
     
     //#define REVERSE_MOTORS_DIRECTION  // reverse both motors direction
 
-    #define MAX_SPEED           400  // should be <= 500
-    #define MAX_TARGET_ANGLE    120  // where 10 = 1 degree, should be <= 15 degree (i.e. <= 150) 
+    #define MAX_SPEED           350  // should be <= 500
+    #define MAX_TARGET_ANGLE    130  // where 10 = 1 degree, should be <= 15 degree (i.e. <= 150) 
     #define MAX_STEERING        90   // should be <= 100
+	
+    #define RISE_SPEED_K		1.0f // this coefficient means how faster robot will be during the auto rising...  should be >= 0.5 but <= 2.0
     
 
   /****************************    Motor minthrottle    *******************************/
@@ -216,7 +218,7 @@
     #define YAW_DIRECTION 1
     //#define YAW_DIRECTION -1 // if you want to reverse the yaw correction direction
 
-    #define ONLYARMWHENFLAT //prevent the copter from arming when the copter is tilted
+    //#define ONLYARMWHENFLAT //prevent the copter from arming when the copter is tilted
 
    /********************************    ARM/DISARM    *********************************/
    /* optionally disable stick combinations to arm/disarm the motors.
@@ -480,8 +482,8 @@
       //#define ITG3200_LPF_188HZ
       //#define ITG3200_LPF_98HZ
       //#define ITG3200_LPF_42HZ
-      //#define ITG3200_LPF_20HZ
-      #define ITG3200_LPF_10HZ      // Use this only in extreme cases, rather change motors and/or props
+      #define ITG3200_LPF_20HZ
+      //#define ITG3200_LPF_10HZ      // Use this only in extreme cases, rather change motors and/or props
 
       /* MPU6050 Low pass filter setting. In case you cannot eliminate all vibrations to the Gyro, you can try
          to decrease the LPF frequency, only one step per try. As soon as twitching gone, stick with that setting.
@@ -492,9 +494,9 @@
       //#define MPU6050_LPF_188HZ
       //#define MPU6050_LPF_98HZ
       //#define MPU6050_LPF_42HZ
-      //#define MPU6050_LPF_20HZ
+      #define MPU6050_LPF_20HZ
       //#define MPU6050_LPF_10HZ
-      #define MPU6050_LPF_5HZ       
+      //#define MPU6050_LPF_5HZ       
 
     /******                Gyro smoothing    **********************************/
       /* GYRO_SMOOTHING. In case you cannot reduce vibrations _and_ _after_ you have tried the low pass filter options, you
@@ -546,8 +548,8 @@
     #define AP_MODE 40  // Create a deadspan for GPS.
         
   /************************   Assisted AcroTrainer    ************************************/
-    /* Train Acro with auto recovery. Value set the point where ANGLE_MODE takes over.
-       Remember to activate ANGLE_MODE first!...
+    /* Train Acro with auto recovery. Value set the point where SIMPLE_MODE takes over.
+       Remember to activate SIMPLE_MODE first!...
        A Value on 200 will give a very distinct transfer */
     //#define ACROTRAINER_MODE 200   // http://www.multiwii.com/forum/viewtopic.php?f=16&t=1944#p17437
 
@@ -797,7 +799,7 @@
        with R1=33k and R2=51k
        vbat = [0;1023]*16/VBATSCALE
        must be associated with #define BUZZER ! */
-    #define VBAT              // uncomment this line to activate the vbat code
+    //#define VBAT              // uncomment this line to activate the vbat code
     #define VBATSCALE       131 // (*) (**) change this value if readed Battery voltage is different than real voltage
     #define VBATNOMINAL     126 // 12,6V full battery nominal voltage - only used for lcd.telemetry
     #define VBATLEVEL_WARN1 107 // (*) (**) 10,7V
