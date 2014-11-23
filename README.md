@@ -8,7 +8,7 @@ Video:
 http://youtu.be/U8bBna9iWCU
 
 Blogs:
-http://forum.rcdesign.ru/blogs/83206/blog18515.html 
+http://forum.rcdesign.ru/blogs/83206/blog18515.html
 http://www.multiwii.com/forum/viewtopic.php?f=7&t=4787
 
 
