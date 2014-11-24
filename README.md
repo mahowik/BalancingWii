@@ -5,6 +5,8 @@ BalancingWii rev 1.0
 
 Autumn... More time to keep soldering iron and do something cool! So let's continue! :)
 
+This is stable 1.0 release of balancing robot (based on modified/extended MultiWii 2.3 firmware).
+
 New features:
  - Fall down?! New auto rise (stand up) function! (can be activated via box in GUI). 
    Now it's also possible to stand up manually when it's fall down.
@@ -13,9 +15,10 @@ New features:
  - Possibility to control/steer from Android device by MultiWii EZ-GUI tool (go to Config -> Advanced -> Model control New) 
  - More stability and speed accordingly (see in video!)
  - Predefined PIDs
+ - Simple mode for newcomers
  - Set of code refactorings and cleaning.
 
-New video: ...coming soon! :)
+New video: http://youtu.be/038e2j9nE3M
 
 Enjoy! ;)  
 
@@ -39,7 +42,7 @@ Blogs:
 Hardware:
 - Arduino nano (atmega328p)
 - mpu6050 gyro-accelerometer (GY_521)
-- any RC receiver with CPPM (ppmsum) output
+- any RC receiver with CPPM (ppmsum) output OR serial Bluetooth module like HC-05
 - A4988 motor drivers with 1/8 microstepping configuration (see http://www.pololu.com/product/1182/ for details)
 - Nema 17 stepper motors
 - 1/8 Buggy Wheels
