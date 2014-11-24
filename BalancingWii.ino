@@ -24,6 +24,8 @@ BalancingWii rev 1.0
 
 Autumn... More time to keep soldering iron and do something cool! So let's continue! :)
 
+This is stable 1.0 release of balancing robot (based on modified/extended MultiWii 2.3 firmware).
+
 New features:
  - Fall down?! New auto rise (stand up) function! (can be activated via box in GUI). 
    Now it's also possible to stand up manually when it's fall down.
@@ -32,16 +34,14 @@ New features:
  - Possibility to control/steer from Android device by MultiWii EZ-GUI tool (go to Config -> Advanced -> Model control New) 
  - More stability and speed accordingly (see in video!)
  - Predefined PIDs
+ - Simple mode for newcomers
  - Set of code refactorings and cleaning.
 
-New video: soon! :)
+New video: http://youtu.be/038e2j9nE3M
 
 Enjoy! ;)  
 
 
-===================================
-BalancingWii rev 0.1 
-===================================
 Hi all! 
 
 This is the balancing robot based on modified/extended MultiWii 2.3 firmware.
@@ -57,7 +57,7 @@ Blogs:
 Hardware:
 - Arduino nano (atmega328p)
 - mpu6050 gyro-accelerometer (GY_521)
-- any RC receiver with CPPM (ppmsum) output
+- any RC receiver with CPPM (ppmsum) output OR serial Bluetooth module like HC-05
 - A4988 motor drivers with 1/8 microstepping configuration (see http://www.pololu.com/product/1182/ for details)
 - Nema 17 stepper motors
 - 1/8 Buggy Wheels
@@ -66,27 +66,27 @@ Hardware:
 
 Pinout for Arduino nano (atmega328p):
 
-A0 - V_BATPIN: after the resistor divisor we should get [0V;5V]->[0;1023] on analogue V_BATPIN with R1=33k and R2=51k, 
+- A0 - V_BATPIN: after the resistor divisor we should get [0V;5V]->[0;1023] on analogue V_BATPIN with R1=33k and R2=51k, 
      i.e. (+12v)~51k~(A0 pin)~33k~(GND)
-A2 - BUZZERPIN
+- A2 - BUZZERPIN
 
 I2C:
-A4 - SDA
-A5 - SCL
+- A4 - SDA
+- A5 - SCL
 
 RC control:
-D2 - CPPM (PPM_SUM)
+- D2 - CPPM (PPM_SUM)
 
 Motor driver pins:
-D5 - STEP1 (PORTD 5)
-D6 - STEP2 (PORTD 6)
-D7 - DIR1 (PORTD 7)
-D8 - DIR2 (PORTB 0)
-D4 - ENABLE (for both)
+- D5 - STEP1 (PORTD 5)
+- D6 - STEP2 (PORTD 6)
+- D7 - DIR1 (PORTD 7)
+- D8 - DIR2 (PORTB 0)
+- D4 - ENABLE (for both)
 
 If you look to the tail of the robot:
-right motor = STEP1 & DIR1
-left motor  = STEP2 & DIR2
+- right motor = STEP1 & DIR1
+- left motor  = STEP2 & DIR2
 
    
 Also see for new defines added with this project for robot setup:
@@ -111,6 +111,7 @@ Big thanks for the projects:
    
 
 Enjoy! ;)
+
 
 ***/
  
