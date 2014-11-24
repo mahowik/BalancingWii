@@ -42,6 +42,10 @@ New video: http://youtu.be/038e2j9nE3M
 Enjoy! ;)  
 
 
+===================================
+BalancingWii rev 0.1 
+===================================
+
 Hi all! 
 
 This is the balancing robot based on modified/extended MultiWii 2.3 firmware.
