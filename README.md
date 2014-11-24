@@ -18,7 +18,12 @@ New features:
  - Simple mode for newcomers
  - Set of code refactorings and cleaning.
 
-New video: http://youtu.be/038e2j9nE3M
+New video: 
+http://youtu.be/038e2j9nE3M
+
+Blogs:
+- http://forum.rcdesign.ru/blogs/83206/blog19661.html
+- http://www.multiwii.com/forum/viewtopic.php?f=7&t=4787
 
 Enjoy! ;)  
 
