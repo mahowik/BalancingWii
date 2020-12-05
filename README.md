@@ -18,6 +18,10 @@ New features:
  - Simple mode for newcomers
  - Set of code refactorings and cleaning.
 
+Apps:
+https://play.google.com/store/apps/details?id=ru.shokurov.mspcontrol
+https://play.google.com/store/apps/details?id=com.ezio.multiwii
+
 New video: 
 http://youtu.be/038e2j9nE3M
 
