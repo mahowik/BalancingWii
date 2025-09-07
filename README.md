@@ -25,6 +25,9 @@ https://play.google.com/store/apps/details?id=com.ezio.multiwii
 New video: 
 http://youtu.be/038e2j9nE3M
 
+Another example of project implementation:
+https://www.instructables.com/DIY-Self-Balancing-Robot
+
 Blogs:
 - http://forum.rcdesign.ru/blogs/83206/blog19661.html
 - http://www.multiwii.com/forum/viewtopic.php?f=7&t=4787
