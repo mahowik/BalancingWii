@@ -19,14 +19,15 @@ New features:
  - Set of code refactorings and cleaning.
 
 Apps:
-https://play.google.com/store/apps/details?id=ru.shokurov.mspcontrol
-https://play.google.com/store/apps/details?id=com.ezio.multiwii
+- https://play.google.com/store/apps/details?id=ru.shokurov.mspcontrol
+- https://play.google.com/store/apps/details?id=com.ezio.multiwii
 
 New video: 
-http://youtu.be/038e2j9nE3M
+- http://youtu.be/038e2j9nE3M
 
-Another example of project implementation:
-https://www.instructables.com/DIY-Self-Balancing-Robot
+Here are a few more great examples of project implementation:
+- https://www.instructables.com/DIY-Self-Balancing-Robot
+- https://github.com/ArduJimmy/Mahowik_BalancingWii_With_NRF24L01
 
 Blogs:
 - http://forum.rcdesign.ru/blogs/83206/blog19661.html
