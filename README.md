@@ -30,7 +30,7 @@ Here are a few more great examples of project implementation:
 - https://github.com/ArduJimmy/Mahowik_BalancingWii_With_NRF24L01
 
 Blogs:
-- http://forum.rcdesign.ru/blogs/83206/blog19661.html
+- https://rcopen.com/blogs/83206/19661
 - http://www.multiwii.com/forum/viewtopic.php?f=7&t=4787
 
 Enjoy! ;)  
